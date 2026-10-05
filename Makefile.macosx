@@ -1,15 +1,15 @@
 CFITSIOINCDIR = /usr/local/include
 
 #use only with no debugging
-COPTS = -funroll-loops -O3 -ansi -Wall -I$(CFITSIOINCDIR) -I/usr/include/malloc
+COPTS = -funroll-loops -O3 -ansi -Wall -I$(CFITSIOINCDIR)
 LIBS  =  -lm -lcfitsio  
 
 CC    = gcc 
 
 STDH  = functions.h globals.h defaults.h
-ALL   = main.o vargs.o alard.o functions.o 
-SWIG  = alard.o functions.o 
-ALLT  = main_test.o vargs.o alard.o functions.o 
+ALL   = main.o vargs.o alard.o functions.o globals.o
+SWIG  = alard.o functions.o globals.o
+ALLT  = main_test.o vargs.o alard.o functions.o globals.o
 
 all:	hotpants 
 
@@ -34,7 +34,10 @@ functions.o: $(STDH) functions.c
 vargs.o: $(STDH) vargs.c
 	$(CC) $(COPTS)  -c vargs.c
 
-NCOPTS = -funroll-loops -O3 -I$(CFITSIOINCDIR) -I/usr/include/malloc
+globals.o: $(STDH) globals.c
+	$(CC) $(COPTS)  -c globals.c
+
+NCOPTS = -funroll-loops -O3 -I$(CFITSIOINCDIR)
 
 extractkern : extractkern.c
 	$(CC) $(NCOPTS) extractkern.c -o extractkern $(LIBS) 

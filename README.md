@@ -1,9 +1,51 @@
 hotpants
 ========
 
-Import of v5.1.11 of High Order Transform of Psf ANd Template Subtraction code (hotpants).
+Fork of [acbecker/hotpants](https://github.com/acbecker/hotpants) - an import
+of v5.1.11 of Andy Becker's High Order Transform of Psf ANd Template
+Subtraction code (HOTPANTS) - maintained for use with
+[AutoPhOT](https://github.com/Astro-Sean/autophot).
 
-Note on usage: Your mileage will vary based on the configuration of the software.  The most important tuning parameter is the size of the gaussians that you use.  A good rule of thumb is, asssuming you have measured the widths of the Psfs in the science and template image:
+This fork fixes the build on modern toolchains:
+
+- Removed `#include <malloc.h>` from all sources. `malloc.h` is a
+  glibc-only header that does not exist on macOS
+  ([upstream issue #4](https://github.com/acbecker/hotpants/issues/4));
+  `stdlib.h` already declares everything the code uses.
+- Moved global variable definitions out of `globals.h` into `globals.c`.
+  The old tentative definitions relied on GCC's legacy `-fcommon`
+  behavior and fail to link on GCC 10+ / Clang 11+ with `multiple
+  definition of ...` errors.
+
+Requirements
+------------
+
+- A C compiler (gcc or clang)
+- [CFITSIO](https://heasarc.gsfc.nasa.gov/fitsio/) library and headers,
+  e.g. `sudo apt install libcfitsio-dev` (Debian/Ubuntu),
+  `brew install cfitsio` (macOS), or
+  `conda install -c conda-forge cfitsio`
+
+Installation
+------------
+
+If cfitsio is not in a standard location, set `CFITSIOINCDIR` and
+`LIBDIR` at the top of `Makefile`, then:
+
+    make
+
+On macOS:
+
+    make -f Makefile.macosx
+
+This builds three executables: `hotpants` (the image subtraction
+pipeline), `extractkern` (kernel inspection), and `maskim` (mask
+application).
+
+Usage notes
+-----------
+
+Your mileage will vary based on the configuration of the software.  The most important tuning parameter is the size of the gaussians that you use.  A good rule of thumb is, asssuming you have measured the widths of the Psfs in the science and template image:
 
  * Sigma_image < Sigma_template : This requires deconvolution (sharpening) of the template.  This will lead to false positives, in practice.  Consider convolving the science image instead (-c i).  OR, since you really don't want to mess with the science pixels unnecessarily, consider convolving the science image with its Psf *before* matching the template to it.  This process is typically done after image subtraction for optimal point source filtering; in this case, the image should not be convolved with anything before detection, or just convolved with a delta function.  I.e.
 
@@ -18,7 +60,9 @@ Note on usage: Your mileage will vary based on the configuration of the software
 
  * Sigma_image > Sigma_template : This leads to smoothing of the template.  Assume that both Psfs are Gaussian, in which case the Gaussian that matches the two has Sigma_match = sqrt(Sigma_image**2 - Sigma_template**2).  It is recommended that this be the central Gaussian in your kernel basis, with the smallest one being 0.5 * Sigma_match and the largest being 2.0 * Sigma_match.  Set these using the -ng flag.  E.g. -ng 3 6 0.5*Sigma_match 4 Sigma_match 2 2.0*Sigma_match.
 
-######### All command line options
+All command line options
+------------------------
+
 ```
 Version 5.1.11
 Required options:

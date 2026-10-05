@@ -2,7 +2,6 @@
 #include<string.h>
 #include<strings.h>
 #include<math.h>
-#include<malloc.h>
 #include<stdlib.h>
 #include<fitsio.h>
 
@@ -15,6 +14,7 @@
 int       ngauss=3, *deg_fixe=NULL, dofullImage=0;
 float     *sigma_gauss=NULL;
 int       fwKernel,nCompKer,nComp,nBGVectors,nCompTotal,kerOrder,bgOrder,nR;
+int       rPixX, rPixY;
 double    *filter_x,*filter_y,**kernel_vec,*kernel_coeffs,*kernel,kSumIm;
 char      *inConv = NULL;
 long      oNaxes[2];

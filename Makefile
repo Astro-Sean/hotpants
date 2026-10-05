@@ -41,7 +41,7 @@ CC    = gcc
 #
 
 STDH  = functions.h globals.h defaults.h
-ALL   = main.o vargs.o alard.o functions.o 
+ALL   = main.o vargs.o alard.o functions.o globals.o
 
 all:	hotpants extractkern maskim
 
@@ -60,6 +60,9 @@ functions.o: $(STDH) functions.c
 
 vargs.o: $(STDH) vargs.c
 	$(CC) $(COPTS)  -c vargs.c
+
+globals.o: $(STDH) globals.c
+	$(CC) $(COPTS)  -c globals.c
 
 extractkern : extractkern.o 
 	$(CC) extractkern.o -o extractkern $(LIBS) $(COPTS)
