@@ -16,6 +16,8 @@ This fork fixes the build on modern toolchains:
   The old tentative definitions relied on GCC's legacy `-fcommon`
   behavior and fail to link on GCC 10+ / Clang 11+ with `multiple
   definition of ...` errors.
+- Unified the platform-specific Makefiles into a single `Makefile`
+  that locates cfitsio automatically on Linux and macOS.
 
 Requirements
 ------------
@@ -29,14 +31,15 @@ Requirements
 Installation
 ------------
 
-If cfitsio is not in a standard location, set `CFITSIOINCDIR` and
-`LIBDIR` at the top of `Makefile`, then:
+The same `Makefile` works on Linux and macOS:
 
     make
 
-On macOS:
+cfitsio is located automatically via pkg-config, Homebrew (macOS), or
+an activated conda environment. If detection fails, point make at
+your cfitsio install:
 
-    make -f Makefile.macosx
+    make CFITSIOINCDIR=/path/to/include LIBDIR=/path/to/lib
 
 This builds three executables: `hotpants` (the image subtraction
 pipeline), `extractkern` (kernel inspection), and `maskim` (mask
